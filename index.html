@@ -1,0 +1,1504 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>깊이 있는 학습을 위한 컨셉 영어 스튜디오: 2022 Digital Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sky: { 50: '#F0F9FF', 500: '#0EA5E9' },
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neubrutalism': '4px 4px 0px #000000',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'pop-in': 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        popIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.5)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+        }
+    }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Deep Thinking Guard Overlay */
+        .thinking-guard-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: inherit;
+        }
+    </style>
+</head>
+
+<body class="bg-[#F0F4F8]">
+    <div id="root"></div>
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import ReactDOM from 'react-dom/client';
+        import {
+            Layout, BookOpen, PenTool, Mic, MonitorPlay,
+            Volume2, ChevronRight, CheckCircle,
+            Star, User, Play, Square, ArrowRight, MousePointer2,
+            Download, Sparkles, X, Menu, Palette, Grid,
+            Edit3, Music, Zap, Layers, Dices, Save, Headphones, Heart,
+            MessageCircle, AlertTriangle, MicOff, Loader2, Send, Brain, Smile,
+            Clock, Target, Unlock, HelpCircle, Lightbulb, Info, Award, Cpu, RefreshCw, Rocket, Check, Github
+        } from 'lucide-react';
+
+        // ── Knowledge Type Definitions (Educational Foundation) ──
+        const KNOWLEDGE_TYPES = {
+            // Competencies (핵심 역량)
+            AES: { label: '심미적 감성', full: '심미적 감성 역량', color: 'bg-[#E2F2FF] text-[#0066A1] border-[#B8D9FB]', dot: 'bg-[#0066A1]', desc: '언어와 문화를 통해 아름다움을 느끼고 공감하는 힘을 길러요!' },
+            COL: { label: '협력적 소통', full: '협력적 소통 역량', color: 'bg-[#D6EFFF] text-[#0066A1] border-[#A1DFFF]', dot: 'bg-[#0066A1]', desc: '다른 사람과 조화롭게 의견을 나누고 협동하며 대화해요!' },
+            INF: { label: '지식정보처리', full: '지식정보처리 역량', color: 'bg-[#0066A1] text-white border-[#004D7A]', dot: 'bg-white', desc: '디지털 도구와 데이터를 활용하여 정보를 똑똑하게 찾아내고 활용해요!' },
+            CRE: { label: '창의적 사고', full: '창의적 사고 역량', color: 'bg-[#B8D994] text-[#1E3A1E] border-[#94C76E]', dot: 'bg-[#1E3A1E]', desc: '새로운 시각으로 생각하고 나만의 독창적인 아이디어를 표현해요!' },
+            SEL: { label: '자기관리', full: '자기관리 역량', color: 'bg-[#86C786] text-white border-[#5DA15D]', dot: 'bg-white', desc: '나의 학습 목표를 스스로 세우고 꾸준히 노력하며 성장해요!' },
+            COM: { label: '공동체', full: '공동체 역량', color: 'bg-[#00B5E2] text-white border-[#0092B3]', dot: 'bg-white', desc: '우리 사회의 구성원으로서 책임감을 느끼고 존중하며 함께 살아가요!' },
+
+            // Domains (언어 영역)
+            REC: { label: '이해 (REC)', full: '이해 (Reception)', color: 'bg-slate-100 text-slate-700 border-slate-300', dot: 'bg-slate-500', desc: '듣기, 읽기, 보기를 통해 정보를 정확하게 받아들이는 과정이에요.' },
+            PRO: { label: '표현 (PRO)', full: '표현 (Production)', color: 'bg-slate-100 text-slate-700 border-slate-300', dot: 'bg-slate-500', desc: '말하기, 쓰기, 제시하기를 통해 나의 생각을 밖으로 표현하는 과정이에요.' },
+            INT: { label: '상호작용 (INT)', full: '상호작용 (Interaction)', color: 'bg-slate-100 text-slate-700 border-slate-300', dot: 'bg-slate-500', desc: '다른 사람(또는 AI)과 소통하며 의미를 완성해가는 주고받기 과정이에요.' },
+        };
+
+        // ── Knowledge Badge Component ──
+        const KnowledgeBadge = ({ types, className = '' }) => (
+            <div className={`flex flex-wrap gap-2 ${className}`}>
+                {types.map(t => {
+                    const info = KNOWLEDGE_TYPES[t];
+                    return (
+                        <div key={t} className="">
+                            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 text-xs font-black tracking-wide cursor-default select-none ${info.color}`}>
+                                <span className={`w-2 h-2 rounded-full ${info.dot}`}></span>
+                                {info.label}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+
+        // ── Learning Tips Panel ──
+        const LearningTips = ({ title, items, color = 'indigo' }) => {
+            const colorMap = {
+                indigo: 'bg-indigo-50 border-indigo-200 text-indigo-800',
+                teal: 'bg-teal-50 border-teal-200 text-teal-800',
+                purple: 'bg-purple-50 border-purple-200 text-purple-800',
+                orange: 'bg-orange-50 border-orange-200 text-orange-800',
+                rose: 'bg-rose-50 border-rose-200 text-rose-800',
+            };
+            return (
+                <div className={`rounded-2xl border-2 p-5 mt-4 ${colorMap[color]}`}>
+                    <p className="text-sm font-black uppercase tracking-widest mb-3 opacity-60">{title}</p>
+                    <ul className="space-y-2.5">
+                        {items.map((item, i) => (
+                            <li key={i} className="flex items-start gap-2 text-lg font-bold leading-relaxed">
+                                <span className="mt-0.5 shrink-0">💡</span>{item}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        };
+
+        const speak = (text) => {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            const voices = window.speechSynthesis.getVoices();
+            const voice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Samantha'));
+            if (voice) utterance.voice = voice;
+            window.speechSynthesis.speak(utterance);
+        };
+
+
+
+        const JOB_DATABASE = [
+            { id: 'baker', job: "Baker", script: "I work in a sweet kitchen. I love baking fresh bread.", full: "I want to be a baker.", full_ko: "나는 제빵사가 되고 싶어.", reason: "making delicious cookies", icon: "🍪", value: "Bakers share happiness through warm food.", value_ko: "제빵사는 따뜻한 음식으로 행복을 나누어 줍니다." },
+            { id: 'pilot', job: "Pilot", script: "I fly a big airplane. I travel to many countries.", full: "I want to be a pilot.", full_ko: "나는 조종사가 되고 싶어.", reason: "flying in the sky", icon: "✈️", value: "Pilots connect people across the world.", value_ko: "조종사는 전 세계 사람들을 하나로 연결해 줍니다." },
+            { id: 'doctor', job: "Doctor", script: "I work in a hospital. I help sick people.", full: "I want to be a doctor.", full_ko: "나는 의사가 되고 싶어.", reason: "helping people", icon: "🩺", value: "Doctors protect our health and lives.", value_ko: "의사는 우리의 건강과 소중한 생명을 지켜 줍니다." },
+            { id: 'webtoon', job: "Webtoon Artist", script: "I use a tablet. I draw funny stories for readers.", full: "I want to be a webtoon artist.", full_ko: "나는 웹툰 작가가 되고 싶어.", reason: "drawing funny stories", icon: "🎨", value: "Artists give joy and imagination.", value_ko: "작가는 사람들에게 즐거움과 상상력을 선물합니다." },
+            { id: 'youtube', job: "YouTuber", script: "I hold a camera. I make fun videos for fans.", full: "I want to be a YouTuber.", full_ko: "나는 유튜버가 되고 싶어.", reason: "making fun videos", icon: "📹", value: "Creators share fun and knowledge.", value_ko: "크리에이터는 즐거운 재미와 유익한 지식을 공유합니다." },
+            { id: 'police', job: "Police Officer", script: "I keep the town safe. I help people in danger.", full: "I want to be a police officer.", full_ko: "나는 경찰관이 되고 싶어.", reason: "keeping the town safe", icon: "👮", value: "Police officers keep our community safe.", value_ko: "경찰관은 우리 사회를 안전하고 평화롭게 지켜 줍니다." },
+            { id: 'chef', job: "Chef", script: "I cook delicious meals in a restaurant.", full: "I want to be a chef.", full_ko: "나는 요리사가 되고 싶어.", reason: "cooking delicious food", icon: "🍳", value: "Chefs create culture with food.", value_ko: "요리사는 맛있는 요리로 새로운 문화를 만들어 갑니다." },
+            { id: 'astro', job: "Astronaut", script: "I wear a space suit. I travel to the moon.", full: "I want to be an astronaut.", full_ko: "나는 우주비행사가 되고 싶어.", reason: "traveling to space", icon: "🚀", value: "Astronauts explore the unknown future.", value_ko: "우주비행사는 미지의 세계와 새로운 미래를 탐험합니다." },
+            { id: 'ai', job: "AI Developer", script: "I write code. I make smart robots that talk.", full: "I want to be an AI developer.", full_ko: "나는 AI 개발자가 되고 싶어.", reason: "making smart robots", icon: "🤖", value: "Developers build a smarter world.", value_ko: "개발자는 기술로 더 똑똑하고 편리한 세상을 만듭니다." },
+            { id: 'florist', job: "Florist", script: "I love flowers. I make pretty bouquets.", full: "I want to be a florist.", full_ko: "나는 플로리스트가 되고 싶어.", reason: "touching beautiful flowers", icon: "💐", value: "Florists make moments beautiful.", value_ko: "플로리스트는 꽃으로 소중한 순간들을 아름답게 꾸며 줍니다." },
+            { id: 'idol', job: "K-Pop Idol", script: "I dance and sing on stage. Fans cheer for me.", full: "I want to be a K-Pop idol.", full_ko: "나는 K-팝 아이돌이 되고 싶어.", reason: "dancing on stage", icon: "🎤", value: "Idols give energy and dreams.", value_ko: "아이돌은 무대에서 에너지와 멋진 꿈을 전달합니다." },
+            { id: 'soccer', job: "Soccer Player", script: "I run on the field. I kick the ball into the goal.", full: "I want to be a soccer player.", full_ko: "나는 축구 선수가 되고 싶어.", reason: "playing soccer", icon: "⚽", value: "Athletes inspire us with passion.", value_ko: "운동선수는 뜨거운 열정으로 우리에게 감동을 줍니다." },
+            { id: 'scientist', job: "Scientist", script: "I work in a lab. I find new things for humanity.", full: "I want to be a scientist.", full_ko: "나는 과학자가 되고 싶어.", reason: "finding new things", icon: "🧪", value: "Scientists advance human knowledge.", value_ko: "과학자는 새로운 지식을 발견하여 인류를 발전시킵니다." },
+            { id: 'firefighter', job: "Firefighter", script: "I put out fires. I save people from danger.", full: "I want to be a firefighter.", full_ko: "나는 소방관이 되고 싶어.", reason: "saving people", icon: "👨‍🚒", value: "Firefighters protect our community.", value_ko: "소방관은 위험한 상황에서 우리의 생명과 재산을 지켜줍니다." },
+            { id: 'architect', job: "Architect", script: "I design beautiful houses and tall buildings.", full: "I want to be an architect.", full_ko: "나는 건축가가 되고 싶어.", reason: "designing buildings", icon: "🏗️", value: "Architects build comfortable spaces.", value_ko: "건축가는 우리가 안전하고 편안하게 쉴 수 있는 공간을 만듭니다." },
+            { id: 'vet', job: "Vet", script: "I help sick animals. I work at an animal clinic.", full: "I want to be a vet.", full_ko: "나는 수의사가 되고 싶어.", reason: "helping pets", icon: "🐾", value: "Vets take care of precious lives.", value_ko: "수의사는 아픈 동물을 치료하며 소중한 생명을 돌봅니다." },
+            { id: 'gamer', job: "Pro-Gamer", script: "I play games very well. I win many tournaments.", full: "I want to be a pro-gamer.", full_ko: "나는 프로게이머가 되고 싶어.", reason: "playing games", icon: "🎮", value: "Gamers bring excitement and fun.", value_ko: "프로게이머는 멋진 경기로 사람들에게 즐거움과 박진감을 줍니다." },
+            { id: 'fashion', job: "Designer", script: "I love clothes. I make stylish dresses for people.", full: "I want to be a designer.", full_ko: "나는 디자이너가 되고 싶어.", reason: "making clothes", icon: "👗", value: "Designers express beauty through fashion.", value_ko: "디자이너는 아름다운 옷으로 사람들의 개성과 아름다움을 표현합니다." },
+            { id: 'farmer', job: "Farmer", script: "I grow healthy plants on my green farm.", full: "I want to be a farmer.", full_ko: "나는 농부가 되고 싶어.", reason: "growing food", icon: "👨‍🌾", value: "Farmers provide healthy food for us.", value_ko: "농부는 우리에게 필요한 건강하고 정직한 먹거리를 키워줍니다." },
+            { id: 'actor', job: "Actor", script: "I act in a movie. I express many feelings on stage.", full: "I want to be an actor.", full_ko: "나는 배우가 되고 싶어.", reason: "acting on stage", icon: "🎭", value: "Actors share emotions and stories.", value_ko: "배우는 다양한 삶과 감정을 연기하며 우리에게 감동을 줍니다." },
+        ];
+
+        const CARD_THEMES = [
+            { id: 'sky', name: '☁️ Sky', bg: 'linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)', text: '#1e3a8a', accent: '#3b82f6' },
+            { id: 'peach', name: '🍑 Peach', bg: 'linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)', text: '#701a75', accent: '#d946ef' },
+            { id: 'mint', name: '🌿 Mint', bg: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)', text: '#064e3b', accent: '#10b981' },
+            { id: 'lemon', name: '🍋 Lemon', bg: 'linear-gradient(120deg, #f6d365 0%, #fda085 100%)', text: '#7c2d12', accent: '#f59e0b' },
+        ];
+
+        const LESSON_STAGES = [
+            {
+                id: 'planning', title: '목표 설정', sub: 'GOAL SETTING', icon: '🎯',
+                inquiry: "나만의 학습 계획을 세워볼까요?", competency: "SEL", lifeConnection: "스스로 계획을 세우는 것이 성장의 시작이에요.",
+                theme: { active: 'bg-indigo-600 text-white border-slate-900 shadow-neubrutalism', completed: 'bg-white border-indigo-200 text-indigo-600', locked: 'bg-white border-slate-100 text-slate-300' }
+            },
+            {
+                id: 'warmup', title: 'NOVA 대화', sub: 'FREE TALK', icon: '🤖',
+                inquiry: "내 꿈의 조각을 자유롭게 떠올려 볼까요?", competency: "COL", lifeConnection: "생각을 나누면 꿈이 더 선명해져요.",
+                theme: { active: 'bg-indigo-600 text-white border-slate-900 shadow-neubrutalism', completed: 'bg-white border-indigo-200 text-indigo-600', locked: 'bg-white border-slate-110 text-slate-300' }
+            },
+            {
+                id: 'discovery', title: '직업 탐구', sub: 'DISCOVERY', icon: '🔍',
+                inquiry: "사람들은 왜 서로 다른 일을 할까요?", competency: "COM", lifeConnection: "각 직업이 우리 사회를 함께 만들어요.",
+                theme: { active: 'bg-indigo-600 text-white border-slate-900 shadow-neubrutalism', completed: 'bg-white border-indigo-200 text-indigo-600', locked: 'bg-white border-slate-100 text-slate-300' }
+            },
+            {
+                id: 'structure', title: '문장 조립', sub: 'BUILDER', icon: '🧩',
+                inquiry: "직업의 가치를 문장으로 완성해 볼까요?", competency: "INF", lifeConnection: "문장은 생각을 단단하게 묶어주는 힘이 있어요.",
+                theme: { active: 'bg-indigo-600 text-white border-slate-900 shadow-neubrutalism', completed: 'bg-white border-indigo-200 text-indigo-600', locked: 'bg-white border-slate-100 text-slate-300' }
+            },
+            {
+                id: 'speaking', title: 'AI 대화', sub: 'SPEAKING', icon: '🎤',
+                inquiry: "내 꿈을 자신 있게 영어로 말할 수 있나요?", competency: "COL", lifeConnection: "말로 표현하면 꿈이 더 선명해져요.",
+                theme: { active: 'bg-indigo-600 text-white border-slate-900 shadow-neubrutalism', completed: 'bg-white border-indigo-200 text-indigo-600', locked: 'bg-white border-slate-100 text-slate-300' }
+            },
+            {
+                id: 'writing', title: 'AI 글쓰기', sub: 'WRITING', icon: '✍️',
+                inquiry: "나만의 미래를 글로 그려볼까요?", competency: "CRE", lifeConnection: "기록하는 순간, 꿈은 현실이 되기 시작해요.",
+                theme: { active: 'bg-indigo-600 text-white border-slate-900 shadow-neubrutalism', completed: 'bg-white border-indigo-200 text-indigo-600', locked: 'bg-white border-slate-100 text-slate-300' }
+            },
+            {
+                id: 'project', title: 'Dream Card', sub: 'PROJECT', icon: '🌟',
+                inquiry: "나만의 드림 카드를 완성했나요?", competency: "SEL", lifeConnection: "꿈을 시각화하면 미래의 내가 더 가까워져요.",
+                theme: { active: 'bg-indigo-600 text-white border-slate-900 shadow-neubrutalism', completed: 'bg-white border-indigo-200 text-indigo-600', locked: 'bg-white border-slate-100 text-slate-300' }
+            }
+        ];
+
+        // --- Custom Hook: Deep Thinking Guard (See-Think-Wonder) ---
+        const useDeepThinking = (trigger, duration = 6000) => {
+            const [isLocked, setIsLocked] = useState(false);
+            const [timeLeft, setTimeLeft] = useState(0);
+
+            useEffect(() => {
+                if (trigger) {
+                    setIsLocked(true);
+                    setTimeLeft(duration / 1000);
+                    const interval = setInterval(() => {
+                        setTimeLeft((prev) => {
+                            if (prev <= 1) {
+                                clearInterval(interval);
+                                setIsLocked(false);
+                                return 0;
+                            }
+                            return prev - 1;
+                        });
+                    }, 1000);
+                    return () => clearInterval(interval);
+                }
+            }, [trigger, duration]);
+
+            return { isLocked, timeLeft };
+        };
+
+        const DeepThinkingGuard = ({ isLocked, timeLeft }) => {
+            if (!isLocked) return null;
+
+            // See-Think-Wonder stages
+            let stage = { icon: '✨', title: 'Ready!', prompt: 'Let\'s go!', color: 'emerald' };
+            if (timeLeft >= 5) {
+                stage = { icon: '👀', title: 'SEE', prompt: 'Look at the picture carefully.', color: 'blue' };
+            } else if (timeLeft >= 3) {
+                stage = { icon: '🧠', title: 'THINK', prompt: 'What does this person do?', color: 'purple' };
+            } else if (timeLeft >= 1) {
+                stage = { icon: '💭', title: 'WONDER', prompt: 'Why is this job important?', color: 'pink' };
+            }
+
+            const colorMap = {
+                blue: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' },
+                purple: { bg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200' },
+                pink: { bg: 'bg-pink-50', text: 'text-pink-600', border: 'border-pink-200' },
+                emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200' }
+            };
+            const colors = colorMap[stage.color];
+
+            return (
+                <div className="absolute inset-0 bg-white/85 backdrop-blur-[6px] z-50 flex flex-col items-center justify-center rounded-[inherit] border-4 border-slate-900 border-dashed animate-fade-in">
+                    <div className="bg-white p-10 rounded-[2.5rem] shadow-neubrutalism border-4 border-slate-900 flex flex-col items-center animate-pop-in max-w-md text-center">
+                        <div className={`text-7xl mb-6 animate-bounce-slow`}>{stage.icon}</div>
+                        <p className={`text-3xl font-black mb-3 ${colors.text}`}>{stage.title}</p>
+                        <p className="text-slate-700 font-bold text-lg mb-6">{stage.prompt}</p>
+
+                        {/* Progress Bar */}
+                        <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden border-2 border-slate-200 mb-3">
+                            <div className={`h-full ${colors.bg} ${colors.border} border-r-4 transition-all duration-1000`} style={{ width: `${((6 - timeLeft) / 6) * 100}%` }}></div>
+                        </div>
+                        <p className="text-slate-400 text-sm font-bold">{timeLeft}s remaining</p>
+                    </div>
+                </div>
+            );
+        };
+
+        function VibeLearningBig() {
+            const defaultKey = "AIzaSyAhcYHR98O_15WVXCL4FtEmgJSNRZ7UtLI";
+            const [apiKey, setApiKey] = useState(localStorage.getItem('mastery_api_key') || defaultKey);
+            const [currentStage, setCurrentStage] = useState('planning');
+            const [completedStages, setCompletedStages] = useState([]);
+            const [userData, setUserData] = useState({ name: 'Student', job: '', reason: '', theme: 'sky' });
+            const [goal, setGoal] = useState({ questions: 5, time: 10 });
+            const [quizPool, setQuizPool] = useState([]);
+            const [timeLeft, setTimeLeft] = useState(600); // 10 min default in seconds
+
+            useEffect(() => {
+                if (apiKey !== defaultKey) {
+                    localStorage.setItem('mastery_api_key', apiKey);
+                }
+            }, [apiKey]);
+
+            useEffect(() => {
+                const count = goal.questions === 'Challenge' ? 20 : goal.questions;
+                const shuffled = [...JOB_DATABASE].sort(() => 0.5 - Math.random());
+                setQuizPool(shuffled.slice(0, Math.min(count, JOB_DATABASE.length)));
+                setTimeLeft(typeof goal.time === 'number' ? goal.time * 60 : 600);
+            }, [goal]);
+
+            useEffect(() => {
+                if (currentStage === 'planning' || timeLeft <= 0) return;
+                const timer = setInterval(() => {
+                    setTimeLeft(prev => prev - 1);
+                }, 1000);
+                return () => clearInterval(timer);
+            }, [currentStage, timeLeft]);
+
+            const formatTime = (seconds) => {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}:${s < 10 ? '0' : ''}${s}`;
+            };
+
+            const completeStage = (stageId) => {
+                if (!completedStages.includes(stageId)) {
+                    setCompletedStages([...completedStages, stageId]);
+                }
+            };
+
+            return (
+                <div className="h-screen w-full bg-[#F0F4F8] font-sans text-slate-800 flex overflow-hidden selection:bg-indigo-100">
+                    {/* Sidebar */}
+                    <aside className="w-80 bg-white border-r border-slate-100 flex flex-col z-20 shadow-sm hidden md:flex shrink-0 h-full">
+                        <div className="p-8 flex items-center gap-4 shrink-0">
+                            <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg relative overflow-hidden">
+                                <Rocket className="relative z-10" size={32} />
+                                <div className="absolute inset-0 bg-indigo-500 translate-y-1"></div>
+                            </div>
+                            <div>
+                                <div className="font-black text-2xl text-slate-800 tracking-tight leading-tight">Mastery Studio</div>
+                                <div className="text-sm text-slate-400 font-bold mt-1">Lv.1 Explorer <span className="text-indigo-400">{userData.name}</span></div>
+                            </div>
+                        </div>
+
+                        <nav className="flex-1 px-4 space-y-4 overflow-y-auto custom-scrollbar pt-2">
+                            {LESSON_STAGES.map((stage, idx) => {
+                                const isCompleted = completedStages.includes(stage.id);
+                                const isActive = currentStage === stage.id;
+                                const isUnlocked = idx === 0 || completedStages.includes(LESSON_STAGES[idx - 1].id) || isCompleted;
+
+                                let styleClass = stage.theme.locked;
+                                if (isActive) styleClass = stage.theme.active;
+                                else if (isCompleted) styleClass = stage.theme.completed;
+
+                                return (
+                                    <button
+                                        key={stage.id}
+                                        onClick={() => setCurrentStage(stage.id)}
+                                        className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group border-2 text-left relative
+                                            ${styleClass} hover:scale-[1.02] cursor-pointer
+                                        `}
+                                    >
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border-2 transition-colors
+                                            ${isActive ? 'bg-white text-indigo-600 border-white' :
+                                                isCompleted ? 'bg-indigo-50 text-indigo-600 border-indigo-200' :
+                                                    'bg-slate-50 text-slate-400 border-slate-200'}
+                                        `}>
+                                            {isCompleted ? <Check size={20} strokeWidth={3} /> : <span className="font-black text-sm">{idx + 1}</span>}
+                                        </div>
+                                        <div>
+                                            <div className={`text-[10px] font-black uppercase tracking-widest leading-none mb-1.5 ${isActive ? 'text-white/70' : 'text-slate-400'}`}>
+                                                {stage.sub}
+                                            </div>
+                                            <div className={`text-lg font-black flex items-center gap-2 ${isActive ? 'text-white' : 'text-slate-700'}`}>
+                                                <span>{stage.icon}</span>
+                                                {stage.title}
+                                            </div>
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </nav>
+
+                        <div className="p-8 bg-slate-50 border-t border-slate-100 shrink-0">
+                            <div className="flex justify-between text-xs font-black text-slate-400 mb-3 tracking-widest uppercase">
+                                <span>Settings & Sync</span>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <div className="relative group">
+                                    <input
+                                        type="password"
+                                        placeholder="API Key..."
+                                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold focus:border-indigo-400 outline-none"
+                                        value={apiKey}
+                                        onChange={(e) => setApiKey(e.target.value)}
+                                    />
+                                    <div className="absolute left-0 -top-12 bg-slate-800 text-white text-[10px] px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap border border-slate-700">
+                                        API 키를 입력하면 나만의 키로 학습할 수 있어요!
+                                    </div>
+                                </div>
+                                <a href="https://github.com" target="_blank" className="flex items-center justify-center gap-2 w-full bg-slate-800 text-white py-2 rounded-xl text-xs font-black hover:bg-slate-700 transition-all border-b-4 border-slate-900 active:border-b-0 active:translate-y-1">
+                                    <Github size={14} /> GitHub Shared Project
+                                </a>
+                            </div>
+                            <div className="mt-6 flex justify-between text-sm font-bold text-slate-500 mb-2">
+                                <span>MY PROGRESS</span>
+                                <span>{Math.round((completedStages.length / 7) * 100)}%</span>
+                            </div>
+                            <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden border border-slate-300">
+                                <div className="bg-gradient-to-r from-pink-400 via-purple-400 to-emerald-400 h-3 rounded-full transition-all duration-700" style={{ width: `${(completedStages.length / 7) * 100}%` }}></div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* Main Content */}
+                    <main className="flex-1 flex flex-col h-full relative bg-[#F0F4F8] min-w-0">
+                        <header className="h-auto py-4 flex flex-col items-center justify-between px-10 bg-white/90 backdrop-blur-md sticky top-0 z-10 border-b border-slate-100 shrink-0 shadow-sm">
+                            <div className="flex w-full items-center justify-between mb-2">
+                                <div className="flex items-center gap-4">
+                                    <span className="bg-indigo-100 text-indigo-600 text-sm px-3 py-1.5 rounded-xl font-bold border border-indigo-200">Unit 11</span>
+                                    <span className="font-bold text-xl text-slate-500">Career Exploration</span>
+                                </div>
+                                <div className={`flex items-center gap-3 bg-white px-5 py-2.5 rounded-full border-2 border-slate-200 shadow-sm hover:shadow-md transition-shadow ${timeLeft < 60 ? 'animate-pulse border-red-400' : ''}`}>
+                                    <User size={20} className="text-indigo-400" />
+                                    <span className="font-bold text-base text-slate-600">{userData.name}</span>
+                                    <div className="h-4 w-px bg-slate-300 mx-2"></div>
+                                    <span className={`text-sm font-bold flex items-center gap-1 ${timeLeft < 60 ? 'text-red-500' : 'text-slate-400'}`}>
+                                        <Clock size={14} /> {formatTime(timeLeft)}
+                                    </span>
+                                </div>
+                            </div>
+                            {/* Core Inquiry Question Banner - SIMPLIFIED */}
+                            <div className="w-full bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-100 rounded-xl py-2 px-6 text-center shadow-sm relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
+                                <h1 className="text-xl md:text-2xl font-black text-slate-800 tracking-tight mb-0.5 group-hover:scale-105 transition-transform duration-300">
+                                    "Who do I want to be?"
+                                </h1>
+                                <p className="text-slate-500 font-bold text-xs md:text-sm mb-1">(나는 어떤 사람이 되고 싶나요?)</p>
+                                <Lightbulb className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-200 opacity-40 group-hover:opacity-100 group-hover:text-indigo-400 transition-all" size={28} />
+                            </div>
+
+                            {/* Stage-Specific Inquiry Banner */}
+                            {LESSON_STAGES.find(s => s.id === currentStage) && (
+                                <div className="w-full mt-3 animate-fade-in-up">
+                                    <div className={`bg-white rounded-2xl p-4 border-2 shadow-sm transition-all flex items-center justify-between gap-4
+                                        ${currentStage === 'planning' ? 'border-slate-200 bg-slate-50/30' :
+                                            currentStage === 'warmup' ? 'border-pink-100 bg-pink-50/20' :
+                                                currentStage === 'discovery' ? 'border-blue-100 bg-blue-50/20' :
+                                                    currentStage === 'structure' ? 'border-purple-100 bg-purple-50/20' :
+                                                        currentStage === 'speaking' ? 'border-orange-100 bg-orange-50/20' :
+                                                            currentStage === 'writing' ? 'border-rose-100 bg-rose-50/20' :
+                                                                'border-emerald-100 bg-emerald-50/20'}
+                                    `}>
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-1 text-left">
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">단계 탐구 질문</span>
+                                                {LESSON_STAGES.find(s => s.id === currentStage).competency && (
+                                                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 
+                                                        ${KNOWLEDGE_TYPES[LESSON_STAGES.find(s => s.id === currentStage).competency].color}
+                                                    `}>
+                                                        {KNOWLEDGE_TYPES[LESSON_STAGES.find(s => s.id === currentStage).competency].label}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex items-start gap-2 text-base font-black text-slate-700 leading-tight text-left">
+                                                <span className="text-indigo-500 text-sm">🔍</span>
+                                                {LESSON_STAGES.find(s => s.id === currentStage).inquiry}
+                                            </div>
+                                            {LESSON_STAGES.find(s => s.id === currentStage).lifeConnection && (
+                                                <div className="mt-1 flex items-center gap-2 text-[11px] font-bold text-slate-400 text-left">
+                                                    <span className="text-yellow-500">💡</span>
+                                                    삶의 연결: {LESSON_STAGES.find(s => s.id === currentStage).lifeConnection}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </header>
+
+                        <div className="flex-1 overflow-y-auto p-8 relative scroll-smooth custom-scrollbar">
+                            <div className="max-w-6xl mx-auto pb-40">
+                                {currentStage === 'planning' && <StagePlanning goal={goal} setGoal={setGoal} onComplete={() => { completeStage('planning'); setCurrentStage('warmup'); }} />}
+                                {currentStage === 'warmup' && <StageFreeTalk apiKey={apiKey} onComplete={() => { completeStage('warmup'); setCurrentStage('discovery'); }} />}
+                                {currentStage === 'discovery' && <StageDiscovery pool={quizPool} onComplete={() => { completeStage('discovery'); setCurrentStage('structure'); }} />}
+                                {currentStage === 'structure' && <StageBuilder pool={quizPool} onComplete={() => { completeStage('structure'); setCurrentStage('speaking'); }} />}
+                                {currentStage === 'speaking' && <StageSpeaking apiKey={apiKey} pool={quizPool} onComplete={() => { completeStage('speaking'); setCurrentStage('writing'); }} />}
+                                {currentStage === 'writing' && <StageWriting apiKey={apiKey} onComplete={() => { completeStage('writing'); setCurrentStage('project'); }} />}
+                                {currentStage === 'project' && <StageProject userData={userData} setUserData={setUserData} goal={goal} onComplete={() => completeStage('project')} />}
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        }
+
+        function StagePlanning({ goal, setGoal, onComplete }) {
+            const QUESTIONS_OPTIONS = [5, 10, 15, '전체 도전 (20Q)'];
+            const TIME_OPTIONS = [5, 10, 15, 20, 30];
+
+            return (
+                <div className="flex flex-col items-center justify-center animate-fade-in w-full min-h-[600px]">
+                    <div className="bg-white rounded-[3rem] p-12 shadow-neubrutalism shadow-slate-200 w-full max-w-4xl border-4 border-slate-900 text-center relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-slate-700 to-slate-500 border-b-4 border-slate-900"></div>
+
+                        <div className="mb-8">
+                            <span className="bg-slate-100 text-slate-600 px-5 py-2 rounded-full text-sm font-bold tracking-wide border-2 border-slate-300">STEP 0. PLANNING</span>
+                            <h2 className="text-4xl font-black text-slate-800 mt-6 mb-2">Design Your Mission</h2>
+                            <p className="text-slate-500 font-bold text-lg">오늘의 학습 목표를 스스로 정해보세요.</p>
+                            {/* TPACK Badges */}
+                            <div className="flex justify-center mt-4">
+                                <KnowledgeBadge types={['SEL', 'INF']} />
+                            </div>
+                            <LearningTips
+                                title="이 단계에서 나는..."
+                                color="indigo"
+                                items={[
+                                    '자기관리: 오늘 내가 배울 양과 시간을 직접 정했어요! 스스로 정한 목표는 더 잘 지켜지는 법이에요.',
+                                    '지식정보처리: 이 앱과 디지털 도구를 어떻게 사용하는지 알게 되면 더 똑똑하게 공부할 수 있어요!',
+                                    '심미적 감성: 오늘 배울 직업들에 대해 이미 알고 있는 것을 생각해보세요. 흥미로운 사실이 많아요!',
+                                ]}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+                            {/* Question Count */}
+                            <div className="bg-slate-50 p-8 rounded-[2.5rem] border-2 border-slate-200">
+                                <h3 className="text-2xl font-black text-slate-700 mb-6 flex items-center justify-center gap-2"><Target className="text-indigo-500" /> Questions</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {QUESTIONS_OPTIONS.map(opt => (
+                                        <button
+                                            key={opt}
+                                            onClick={() => setGoal({ ...goal, questions: opt === '전체 도전 (20Q)' ? 'Challenge' : opt })}
+                                            className={`py-4 rounded-2xl font-bold text-lg transition-all border-b-4 active:border-b-0 active:translate-y-1 ${goal.questions === (opt === '전체 도전 (20Q)' ? 'Challenge' : opt)
+                                                ? 'bg-indigo-500 text-white border-indigo-700 shadow-lg scale-105'
+                                                : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100'}`}
+                                        >
+                                            {typeof opt === 'number' ? opt + ' Q' : opt}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Time */}
+                            <div className="bg-slate-50 p-8 rounded-[2.5rem] border-2 border-slate-200">
+                                <h3 className="text-2xl font-black text-slate-700 mb-6 flex items-center justify-center gap-2"><Clock className="text-pink-500" /> Time</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {TIME_OPTIONS.map(opt => (
+                                        <button
+                                            key={opt}
+                                            onClick={() => setGoal({ ...goal, time: opt })}
+                                            className={`py-4 rounded-2xl font-bold text-lg transition-all border-b-4 active:border-b-0 active:translate-y-1 ${goal.time === opt
+                                                ? 'bg-pink-500 text-white border-pink-700 shadow-lg scale-105'
+                                                : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100'}`}
+                                        >
+                                            {opt} min
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onClick={onComplete} className="bg-slate-900 text-white px-16 py-6 rounded-3xl font-black text-2xl shadow-neubrutalism hover:bg-slate-800 flex items-center gap-4 mx-auto animate-bounce border-4 border-slate-900 hover:scale-105 transition-transform">
+                            Mission Start! <ArrowRight size={32} />
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        function StageFreeTalk({ apiKey, onComplete }) {
+            const [history, setHistory] = useState([
+                { role: 'ai', text: "Hello! I'm NOVA. How are you today?", ko: "안녕! 나는 노바야. 오늘 기분이 어때?" }
+            ]);
+            const [isRecording, setIsRecording] = useState(false);
+            const [isProcessing, setIsProcessing] = useState(false);
+            const recognitionRef = useRef(null);
+            const scrollRef = useRef(null);
+
+            useEffect(() => {
+                const timer = setTimeout(() => speak("Hello! I'm NOVA. How are you today?"), 500);
+                return () => clearTimeout(timer);
+            }, []);
+
+            useEffect(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+                }
+            }, [history]);
+
+            // Speech Recognition Setup - Persistent Instance for UX
+            useEffect(() => {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recognition = new SpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.lang = 'en-US';
+
+                    recognition.onresult = (event) => {
+                        const text = event.results[0][0].transcript;
+                        setIsRecording(false);
+                        handleUserMessage(text);
+                    };
+
+                    recognition.onend = () => setIsRecording(false);
+                    recognition.onerror = () => setIsRecording(false);
+
+                    recognitionRef.current = recognition;
+                }
+            }, []);
+
+            const toggleRecord = () => {
+                if (isRecording) {
+                    recognitionRef.current?.stop();
+                } else {
+                    try {
+                        recognitionRef.current?.start();
+                        setIsRecording(true);
+                    } catch (e) {
+                        console.error("Mic error:", e);
+                        setIsRecording(false);
+                    }
+                }
+            };
+
+            const handleUserMessage = async (text) => {
+                const newHistory = [...history, { role: 'user', text }];
+                setHistory(newHistory);
+                setIsProcessing(true);
+
+                try {
+                    const prompt = `Role: Friendly English Robot Tutor named NOVA. User: 6th grader.
+Task: Chat naturally. Keep it short (1-2 sentences).
+Respond in JSON format: {"text": "English reply", "ko": "Korean translation"}
+[IMPORTANT]
+1. "ko" must be simple, friendly Korean.
+2. Provide short English first, then easy Korean translation.
+User said: "${text}"`;
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                        method: "POST", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        console.error("API Error Response:", data);
+                        throw new Error(`API Connection Failed: ${response.status}`);
+                    }
+                    const raw = data.candidates[0].content.parts[0].text;
+                    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+                    const aiResult = jsonMatch ? JSON.parse(jsonMatch[0]) : { text: raw, ko: "번역에 오류가 발생했어요." };
+                    setHistory(prev => [...prev, { role: 'ai', text: aiResult.text, ko: aiResult.ko }]);
+                    speak(aiResult.text);
+                } catch (e) {
+                    console.error("NOVA AI Error (FreeTalk):", e);
+                    const fallback = "I'm sorry, I'm having a little trouble connecting to my brain! Let's try again or move to the next step.";
+                    const ko_fallback = "미안해! 잠시 연결이 원활하지 않아. 다시 말해주거나 다음 단계로 넘어가볼까?";
+                    setHistory(prev => [...prev, { role: 'ai', text: fallback, ko: ko_fallback }]);
+                    speak(fallback);
+                } finally {
+                    setIsProcessing(false);
+                }
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center animate-fade-in w-full">
+                    <div className="bg-white rounded-[3rem] p-10 shadow-neubrutalism shadow-pink-100 w-full max-w-4xl border-4 border-slate-900 min-h-[700px] flex flex-col relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-pink-300 to-rose-300 border-b-4 border-slate-900"></div>
+
+                        <div className="mb-8 flex justify-between items-center shrink-0">
+                            <span className="bg-pink-50 text-pink-600 px-5 py-2 rounded-full text-sm font-bold tracking-wide flex items-center gap-2 border-2 border-pink-200"><Smile size={18} /> WARM UP</span>
+                            <button onClick={onComplete} className="text-slate-400 hover:text-pink-500 font-bold text-sm flex items-center gap-1">Skip <ChevronRight size={16} /></button>
+                        </div>
+
+                        <div ref={scrollRef} className="flex-1 bg-slate-50 rounded-[2.5rem] p-8 overflow-y-auto custom-scrollbar mb-8 flex flex-col gap-6 border-2 border-slate-200">
+                            {history.map((msg, i) => (
+                                <div key={i} className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
+                                    {msg.role === 'ai' && <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-3xl mr-3 shrink-0 border-4 border-slate-900 shadow-sm">🤖</div>}
+                                    <div className={`px-6 py-4 rounded-3xl text-lg font-bold shadow-sm max-w-[80%] leading-relaxed ${msg.role === 'ai' ? 'bg-white text-slate-700 rounded-tl-none border-2 border-slate-200' : 'bg-pink-500 text-white rounded-tr-none border-2 border-pink-600'}`}>
+                                        <div className="text-xl mb-1">{msg.text}</div>
+                                        {msg.ko && <div className="text-sm opacity-60 font-medium text-indigo-700 border-t border-slate-100 mt-2 pt-1">{msg.ko}</div>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Topic Suggestions */}
+                        <div className="mb-6 flex flex-wrap gap-2 justify-center">
+                            <span className="text-xs font-black text-slate-400 w-full mb-1">💡 대화 주제 추천 (Try saying these):</span>
+                            {["What's your favorite job?", "Tell me about bakers.", "How are you today?"].map(topic => (
+                                <button key={topic} onClick={() => handleUserMessage(topic)} className="px-4 py-2 bg-white border-2 border-pink-100 rounded-xl text-sm font-bold text-pink-500 hover:border-pink-400 hover:bg-pink-50 transition-all uppercase leading-tight">"{topic}"</button>
+                            ))}
+                        </div>
+
+                        <div className="flex flex-col items-center justify-center gap-4 shrink-0 relative">
+                            <button onClick={toggleRecord} className={`w-24 h-24 rounded-full flex items-center justify-center shadow-neubrutalism transition-all hover:scale-105 border-4 border-slate-900 ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-pink-500'}`}><Mic size={40} className="text-white" /></button>
+                            <div className="text-sm font-bold text-slate-400 flex flex-col items-center gap-1">
+                                <span>{isRecording ? "듣고 있어요..." : "클릭해서 말하기"}</span>
+                            </div>
+                            <button onClick={onComplete} className="absolute right-0 bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold shadow-neubrutalism hover:bg-slate-700 flex items-center gap-3 text-lg transition-transform hover:scale-105 border-4 border-slate-900">수업 시작 <ArrowRight size={20} /></button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function StageDiscovery({ pool, onComplete }) {
+            const [idx, setIdx] = useState(0);
+            const [revealed, setRevealed] = useState(false);
+            const [options, setOptions] = useState([]);
+            const [phase, setPhase] = useState('word-list'); // 'word-list' -> 'quiz'
+            const [showSubtitle, setShowSubtitle] = useState(false);
+            const { isLocked, timeLeft } = useDeepThinking(phase === 'quiz' ? idx : null, 6000);
+
+            if (pool.length === 0) return null;
+            const current = pool[idx];
+
+            useEffect(() => {
+                if (phase === 'quiz' && current) {
+                    const distractors = JOB_DATABASE.filter(j => j.id !== current.id).sort(() => 0.5 - Math.random()).slice(0, 3);
+                    const newOptions = [current, ...distractors].sort(() => 0.5 - Math.random());
+                    setOptions(newOptions);
+                }
+            }, [idx, current, phase]);
+
+            const handleNext = () => {
+                if (idx < pool.length - 1) {
+                    setIdx(prev => prev + 1);
+                    setRevealed(false);
+                    setShowSubtitle(false);
+                } else {
+                    onComplete();
+                }
+            };
+
+            const handleAnswer = (job) => {
+                if (isLocked) return;
+                if (job === current.job) {
+                    speak(`Great job! ${current.job}. ${current.full}`);
+                    setRevealed(true);
+                } else {
+                    speak("Nice try! Listen again carefully.");
+                }
+            };
+
+            if (phase === 'word-list') {
+                return (
+                    <div className="flex flex-col items-center justify-center w-full animate-fade-in py-8">
+                        <div className="bg-white rounded-[3rem] p-12 shadow-neubrutalism shadow-blue-100 w-full max-w-5xl border-4 border-slate-900 text-center relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-blue-400 to-cyan-300 border-b-4 border-slate-900"></div>
+                            <div className="mb-8">
+                                <span className="bg-blue-50 text-blue-600 px-5 py-2 rounded-full text-sm font-bold tracking-wide border-2 border-blue-200">STAGE PREVIEW</span>
+                                <h2 className="text-4xl font-black text-slate-800 mt-6 mb-2">오늘 배울 핵심 단어들</h2>
+                                <p className="text-slate-500 font-bold text-lg">단어의 의미와 소리를 미리 확인해 보세요.</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                                {pool.map(job => (
+                                    <div key={job.id} className="bg-slate-50 p-6 rounded-3xl border-2 border-slate-100 hover:border-blue-300 transition-colors flex flex-col items-center gap-3">
+                                        <span className="text-5xl">{job.icon}</span>
+                                        <div className="text-center">
+                                            <p className="font-black text-slate-800 text-xl">{job.job}</p>
+                                            <p className="text-sm font-bold text-slate-400">{job.reason}</p>
+                                        </div>
+                                        <button onClick={() => speak(job.job)} className="p-2 bg-white rounded-full shadow-sm hover:bg-blue-50 text-blue-500 border border-slate-200"><Volume2 size={20} /></button>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button onClick={() => setPhase('quiz')} className="bg-slate-900 text-white px-16 py-6 rounded-3xl font-black text-2xl shadow-neubrutalism hover:bg-slate-800 flex items-center gap-4 mx-auto border-4 border-slate-900 hover:scale-105 transition-transform animate-bounce">
+                                퀴즈 시작하기 <Play size={32} />
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="flex flex-col items-center justify-center w-full animate-fade-in relative py-8">
+                    <div className="bg-white rounded-[3rem] p-12 shadow-neubrutalism shadow-blue-100 w-full max-w-4xl text-center relative overflow-hidden border-4 border-slate-900">
+                        <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-blue-400 to-cyan-300 border-b-4 border-slate-900"></div>
+
+                        <div className="mb-6 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <span className="bg-blue-50 text-blue-600 px-5 py-2 rounded-full text-sm font-bold tracking-wide border-2 border-blue-200 uppercase">Step 1. Listening</span>
+                                <span className="text-slate-400 text-sm font-bold">{idx + 1} / {pool.length}</span>
+                            </div>
+                        </div>
+
+                        <h2 className="text-4xl font-black text-slate-800 mb-6 mt-4">Who am I?</h2>
+
+                        <div className="relative">
+                            <DeepThinkingGuard isLocked={isLocked && !revealed} timeLeft={timeLeft} />
+
+                            <div className="flex flex-col items-center mb-12">
+                                <div className="flex items-center gap-6">
+                                    <button onClick={() => speak(current.script + " Who am I?")} className={`w-32 h-32 rounded-full flex items-center justify-center shadow-neubrutalism transition-all duration-300 group border-4 border-slate-900 ${revealed ? 'bg-blue-500 text-white rotate-12 scale-110' : 'bg-white text-blue-500 hover:scale-105'}`}>
+                                        <Volume2 size={64} className={revealed ? "" : "group-hover:animate-pulse"} />
+                                    </button>
+                                    {!revealed && (
+                                        <button onClick={() => setShowSubtitle(!showSubtitle)} className={`px-6 py-4 rounded-2xl border-2 font-bold transition-all ${showSubtitle ? 'bg-amber-100 border-amber-400 text-amber-700' : 'bg-white border-slate-200 text-slate-400 hover:border-blue-400'}`}>
+                                            {showSubtitle ? "Hide Script 자막 끄기" : "Show Script 자막 보기"}
+                                        </button>
+                                    )}
+                                </div>
+                                {!revealed && !showSubtitle && <div className="mt-6 text-blue-400 font-bold text-lg animate-bounce">👆 Click to Listen!</div>}
+                                {showSubtitle && !revealed && (
+                                    <div className="mt-8 bg-amber-50 p-6 rounded-2xl border-2 border-amber-200 animate-fade-in text-xl font-bold text-amber-800">
+                                        <div className="text-sm uppercase tracking-widest opacity-60 mb-1">STORY SCRIPT</div>
+                                        {current.script}
+                                    </div>
+                                )}
+                            </div>
+
+                            {!revealed ? (
+                                <div className={`grid grid-cols-2 gap-6 transition-opacity ${isLocked ? 'opacity-50' : 'opacity-100'}`}>
+                                    {options.map((job) => (
+                                        <button key={job.id} onClick={() => handleAnswer(job.job)} disabled={isLocked} className="py-6 bg-slate-50 rounded-3xl font-bold text-xl text-slate-600 hover:bg-blue-50 hover:text-blue-600 hover:shadow-neubrutalism transition-all flex flex-col items-center gap-3 border-4 border-slate-200 hover:border-slate-900 disabled:opacity-50">
+                                            <span className="text-4xl">{job.icon}</span>{job.job}
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="animate-fade-in-up">
+                                    <div className="bg-blue-50 p-8 rounded-3xl border-2 border-blue-200 mb-8 flex flex-col items-center">
+                                        <div className="text-7xl mb-4 animate-pop-in">{current.icon}</div>
+                                        <p className="text-3xl font-black text-blue-600 mb-2">{current.job}</p>
+                                        <p className="text-xl font-bold text-slate-600 italic mb-2">"{current.full}"</p>
+                                        <p className="text-lg font-bold text-blue-400 mb-4">(나는 {current.job}이 되고 싶어요.)</p>
+                                        <div className="mt-8 w-full bg-blue-50/50 rounded-3xl p-6 border-2 border-blue-100/50 text-left relative overflow-hidden group/value">
+                                            <div className="absolute top-0 right-0 p-3 opacity-10 group-hover/value:opacity-30 transition-opacity">
+                                                <Sparkles size={40} className="text-blue-400" />
+                                            </div>
+                                            <p className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                                                <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                                                사회적 가치 Social Value
+                                            </p>
+                                            <p className="text-xl font-black text-slate-800 leading-tight mb-3">
+                                                {current.value}
+                                            </p>
+                                            <div className="h-0.5 w-12 bg-blue-200 mb-3"></div>
+                                            <p className="text-base font-bold text-slate-500 leading-relaxed italic">
+                                                {current.value_ko}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button onClick={handleNext} className="w-full bg-slate-800 text-white py-6 rounded-3xl font-bold text-2xl shadow-neubrutalism hover:bg-slate-700 flex items-center justify-center gap-4 transition-all hover:scale-[1.02] border-4 border-slate-900">
+                                        {idx < pool.length - 1 ? "Next Question" : "Finish Stage"} <ArrowRight size={28} />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function StageBuilder({ pool, onComplete }) {
+            const [idx, setIdx] = useState(0);
+            const [slots, setSlots] = useState([]);
+            const [bank, setBank] = useState([]);
+            const [status, setStatus] = useState('idle');
+            const { isLocked, timeLeft } = useDeepThinking(idx, 6000); // 6 seconds for See-Think-Wonder
+
+            if (pool.length === 0) return null;
+            const currentJob = pool[idx];
+            const sentenceWords = currentJob.full.split(' ');
+
+            useEffect(() => {
+                setBank([...sentenceWords].sort(() => 0.5 - Math.random()));
+                setSlots([]);
+                setStatus('idle');
+            }, [idx]);
+
+            const handleBankClick = (word, i) => {
+                if (isLocked) return;
+                const newBank = [...bank]; newBank.splice(i, 1);
+                setBank(newBank);
+                setSlots([...slots, word]);
+                setStatus('idle');
+            };
+
+            const handleSlotClick = (word, i) => {
+                const newSlots = [...slots]; newSlots.splice(i, 1);
+                setSlots(newSlots);
+                setBank([...bank, word]);
+                setStatus('idle');
+            };
+
+            const checkAnswer = () => {
+                if (slots.join(' ') === currentJob.full) {
+                    setStatus('success');
+                    speak(currentJob.full);
+                } else {
+                    setStatus('error');
+                    speak("다시 한번 생각해보세요.");
+                }
+            };
+
+            const next = () => {
+                if (idx < pool.length - 1) {
+                    setIdx(prev => prev + 1);
+                } else {
+                    onComplete();
+                }
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center w-full animate-fade-in relative">
+                    <div className="bg-white rounded-[3rem] p-12 shadow-neubrutalism shadow-purple-100 w-full max-w-5xl text-center border-4 border-slate-900 relative">
+                        <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-purple-400 to-pink-300 rounded-t-[3rem] border-b-4 border-slate-900"></div>
+
+                        <h2 className="text-4xl font-black text-slate-800 mb-2 mt-8">문장 조립소</h2>
+                        {/* Learning Badges */}
+                        <div className="flex justify-center mb-3">
+                            <KnowledgeBadge types={['PRO', 'CRE']} />
+                        </div>
+                        <LearningTips
+                            title="이 단계에서 나는..."
+                            color="purple"
+                            items={[
+                                '표현 (PRO): 단어를 순서대로 놓으면서 나만의 영어 문장을 정확하게 만들어 보세요!',
+                                '창의적 사고: 중심 문장과 뒷받침 문장이 어떻게 연결되는지 생각하며 문장을 완성해 보세요!',
+                            ]}
+                        />
+                        <div className="mt-4 mb-6 inline-flex items-center bg-slate-50 px-8 py-4 rounded-[2rem] border-2 border-slate-200 shadow-sm">
+                            <span className="text-5xl mr-6">{currentJob.icon}</span>
+                            <span className="font-bold text-slate-600 text-2xl">Target: {currentJob.job}</span>
+                        </div>
+
+                        <div className="relative">
+                            <DeepThinkingGuard isLocked={isLocked} timeLeft={timeLeft} />
+
+                            <div className={`min-h-[140px] rounded-3xl border-4 border-dashed flex flex-wrap items-center justify-center gap-4 p-8 mb-10 transition-colors ${status === 'success' ? 'border-emerald-400 bg-emerald-50' : (status === 'error' ? 'border-red-300 bg-red-50' : 'border-slate-300 bg-slate-50/50')}`}>
+                                {slots.length === 0 && <span className="text-slate-400 font-bold text-xl flex items-center gap-3 select-none"><MousePointer2 size={24} /> 단어를 순서대로 클릭하세요</span>}
+                                {slots.map((w, i) => (
+                                    <button key={i} onClick={() => handleSlotClick(w, i)} className="bg-white shadow-neubrutalism border-2 border-slate-900 px-6 py-4 rounded-2xl font-bold text-2xl text-purple-600 animate-pop-in hover:bg-red-50 hover:border-red-200">{w}</button>
+                                ))}
+                            </div>
+
+                            <div className="mb-12 min-h-[100px] flex flex-wrap justify-center gap-4">
+                                {bank.map((w, i) => (
+                                    <button key={i} onClick={() => handleBankClick(w, i)} disabled={isLocked} className="bg-purple-600 text-white border-b-8 border-purple-800 px-6 py-4 rounded-2xl font-bold text-2xl hover:-translate-y-1 hover:shadow-xl transition-all active:border-b-0 active:translate-y-2 border-2 border-t-purple-400 border-l-purple-400 border-r-purple-800 disabled:opacity-50">{w}</button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="min-h-[80px]">
+                            {status === 'success' ? (
+                                <div className="animate-fade-in-up">
+                                    {/* PCK Success Feedback */}
+                                    <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 mb-4 text-left">
+                                        <p className="text-sm font-black text-emerald-500 uppercase tracking-widest mb-1">✅ 학습 피드백</p>
+                                        <p className="text-lg font-bold text-slate-600 leading-relaxed">완벽해요! <span className="text-emerald-600 mb-2 block">"I want to be a {currentJob.job}."</span>주어(I) + 동사(want) + 목적어(to be a {currentJob.job}) 구조를 정확히 완성했습니다.</p>
+                                        <p className="text-sm text-slate-400 mt-2">이 문장 패턴으로 어떤 직업이든 표현할 수 있어요!</p>
+                                    </div>
+                                    <button onClick={next} className="bg-emerald-500 text-white px-16 py-5 rounded-3xl font-bold text-2xl shadow-neubrutalism hover:bg-emerald-600 flex items-center gap-4 mx-auto border-4 border-slate-900">
+                                        {idx < pool.length - 1 ? "Next Sentence" : "Go to Step 3"} <ArrowRight size={32} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <button onClick={checkAnswer} className="bg-slate-800 text-white px-16 py-5 rounded-3xl font-bold text-2xl shadow-neubrutalism hover:bg-slate-700 transition-transform hover:scale-[1.02] border-4 border-slate-900">
+                                    Check Answer
+                                </button>
+                            )}
+                            {status === 'error' && (
+                                <div className="mt-3 bg-red-50 border-2 border-red-200 rounded-2xl p-3 text-left">
+                                    <p className="text-red-600 font-bold text-sm">🔄 순서가 맞지 않아요! 문장의 첫 단어는 무엇일까요? 주어부터 시작해 보세요.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Speaking and Project stages remain similar but with consistent styling
+        function StageSpeaking({ apiKey, pool, onComplete }) {
+            // (Same implementation as before, abbreviated for brevity, but assuring full functionality in output)
+            const [phase, setPhase] = useState(0);
+            const [transcript, setTranscript] = useState("");
+            const [aiFeedback, setAiFeedback] = useState(null);
+            const [isEvaluating, setIsEvaluating] = useState(false);
+            const [isRecording, setIsRecording] = useState(false);
+            const recognitionRef = useRef(null);
+
+            if (pool.length === 0) return null;
+            const currentJob = pool[0];
+
+            const DIALOGUE = [
+                { role: 'AI', text: "Hello! What do you want to be?" },
+                { role: 'USER', text: currentJob.full, hint: `I want to be a...` },
+                { role: 'AI', text: "That sounds great! Why?" },
+                { role: 'USER', text: `Because I like ${currentJob.reason}.`, hint: `Because I like...` },
+                { role: 'FINISH', text: "Excellent! Good luck!" }
+            ];
+
+            const currentStepData = DIALOGUE[phase];
+
+            useEffect(() => {
+                if (currentStepData.role === 'AI' || currentStepData.role === 'FINISH') {
+                    const timer = setTimeout(() => speak(currentStepData.text), 600);
+                    if (currentStepData.role === 'AI') {
+                        const nextTimer = setTimeout(() => setPhase(prev => prev + 1), 4000);
+                        return () => clearTimeout(nextTimer);
+                    }
+                    return () => clearTimeout(timer);
+                }
+            }, [phase]);
+
+            useEffect(() => {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognitionRef.current = new SpeechRecognition();
+                    recognitionRef.current.continuous = false;
+                    recognitionRef.current.lang = 'en-US';
+                    recognitionRef.current.onresult = (e) => { setTranscript(e.results[0][0].transcript); setIsRecording(false); };
+                    recognitionRef.current.onerror = () => setIsRecording(false);
+                }
+            }, []);
+
+            const handleRecord = () => {
+                if (isRecording) { recognitionRef.current?.stop(); setIsRecording(false); }
+                else { setTranscript(""); setAiFeedback(null); recognitionRef.current?.start(); setIsRecording(true); }
+            };
+
+            const evaluateWithAI = async () => {
+                setIsEvaluating(true);
+                try {
+                    const prompt = `You are an English teacher evaluating a 6th grade student's spoken response.
+Target sentence: "${currentStepData.text}"
+Student said: "${transcript}"
+
+Evaluate and respond in JSON format ONLY:
+{
+  "correct": boolean, 
+  "feedback": "Encouraging feedback in English", 
+  "korean_feedback": "Friendly Korean translation of English feedback",
+  "learning_tip": "One short sentence in Korean about the learning goal"
+}
+[IMPORTANT]
+1. "korean_feedback" must be simple and easy for a 6th grader.
+2. Be strict: if pronunciation is too different from "${currentStepData.text}", mark "correct": false.
+Strictly use pure JSON.`;
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                    const data = await res.json();
+                    if (!res.ok) {
+                        console.error("AI Speaking API Error:", res.status, data);
+                        throw new Error(`API Error: ${res.status}`);
+                    }
+                    if (!data.candidates || !data.candidates[0]) throw new Error('API Response Error');
+                    let rawText = data.candidates[0].content.parts[0].text;
+                    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                    if (!jsonMatch) throw new Error('Invalid JSON format');
+                    const result = JSON.parse(jsonMatch[0]);
+                    setAiFeedback(result);
+                    if (result.correct) {
+                        speak("Excellent! Well done!");
+                        setTimeout(() => { setPhase(p => p + 1); setTranscript(""); setAiFeedback(null); }, 3000);
+                    } else {
+                        speak("Good try! Let's try again.");
+                    }
+                } catch (e) {
+                    console.error("AI Evaluation Error (Speaking):", e);
+                    setAiFeedback({
+                        correct: false,
+                        feedback: "Connection issue. I couldn't hear you clearly!",
+                        korean_feedback: "연결이 원활하지 않아 잘 듣지 못했어요. (네트워크나 API 키를 확인해 주세요!)",
+                        learning_tip: "인터넷 연결을 확인하고 다시 시도해 보세요."
+                    });
+                }
+                setIsEvaluating(false);
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center w-full animate-fade-in-up py-8">
+                    <div className="bg-white rounded-[3rem] p-12 shadow-neubrutalism shadow-orange-100 w-full max-w-4xl text-center border-4 border-slate-900">
+                        <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-amber-400 to-orange-400 rounded-t-[3rem] border-b-4 border-slate-900"></div>
+                        <span className="bg-amber-50 text-amber-600 px-5 py-2 rounded-full text-sm font-bold tracking-wide border-2 border-amber-200">STEP 3. DIALOGUE</span>
+                        <h2 className="text-4xl font-black text-slate-800 mt-4 mb-3">AI Dialogue</h2>
+                        {/* Learning Badges */}
+                        <div className="flex justify-center mb-3">
+                            <KnowledgeBadge types={['INT', 'COL']} />
+                        </div>
+                        <LearningTips
+                            title="이 단계에서 나는..."
+                            color="orange"
+                            items={[
+                                '상호작용 (INT): AI 친구와 진짜로 대화해보세요! 실시간으로 소통하며 의미를 완성해요.',
+                                '협력적 소통: 배운 직업 이름과 문장을 활용하여 AI와 즐겁게 대화하면 소통 능력이 쑥쑥 늘어요!',
+                            ]}
+                        />
+
+                        <div className="bg-slate-50 rounded-[2.5rem] p-8 border-2 border-slate-200 min-h-[400px] relative flex flex-col justify-center">
+                            <div className={`transition-opacity duration-500 mb-8 ${currentStepData.role === 'AI' || phase > 0 ? 'opacity-100' : 'opacity-0'}`}>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl border-4 border-slate-900 shadow-sm">🤖</div>
+                                    <div className="bg-white border-4 border-slate-900 px-6 py-4 rounded-3xl rounded-tl-none font-bold text-xl">
+                                        <div className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">NOVA</div>
+                                        {currentStepData.text}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {currentStepData.role === 'USER' && (
+                                <div className="flex flex-col items-center w-full animate-fade-in-up">
+                                    <p className="text-2xl font-black text-indigo-700 mb-4">"{currentStepData.text}"</p>
+                                    <p className="text-sm text-slate-400 font-bold mb-4">💡 힌트: {currentStepData.hint}</p>
+                                    <div className="w-full bg-white border-2 border-slate-200 p-6 rounded-2xl mb-4 text-xl text-center min-h-[80px] flex items-center justify-center">{transcript || "Press Record..."}</div>
+                                    {/* AI Feedback with TPACK */}
+                                    {aiFeedback && (
+                                        <div className={`w-full rounded-2xl border-4 p-5 mb-4 text-left animate-fade-in ${aiFeedback.correct ? 'bg-emerald-50 border-emerald-400' : 'bg-red-50 border-red-400'}`}>
+                                            <p className={`text-lg font-black mb-2 ${aiFeedback.correct ? 'text-emerald-600' : 'text-red-600'}`}>{aiFeedback.correct ? '✅ AI 평가: Excellent!' : '🔄 AI 평가: Try Again!'}</p>
+                                            <p className="text-xl font-bold text-slate-800 mb-2 leading-tight">{aiFeedback.feedback}</p>
+                                            <p className="text-lg font-bold text-indigo-600 mb-3 leading-relaxed bg-white/60 p-3 rounded-xl border border-indigo-100">{aiFeedback.korean_feedback}</p>
+                                            {aiFeedback.learning_tip && (
+                                                <div className="bg-white/80 rounded-xl p-3 border-2 border-indigo-200 shadow-sm">
+                                                    <p className="text-sm font-black text-indigo-400 uppercase tracking-widest mb-1">🔬 성장 데이터</p>
+                                                    <p className="text-base font-bold text-slate-600">{aiFeedback.learning_tip}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                    <div className="flex gap-4">
+                                        <button onClick={handleRecord} className={`px-8 py-4 rounded-2xl font-bold text-white border-4 border-slate-900 shadow-neubrutalism ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-slate-800'}`}>{isRecording ? "중지" : "녹음하기"}</button>
+                                        <button onClick={evaluateWithAI} disabled={isEvaluating || !transcript} className="px-8 py-4 rounded-2xl font-bold bg-indigo-600 text-white border-4 border-slate-900 shadow-neubrutalism disabled:opacity-50 flex items-center gap-2">{isEvaluating ? <><Loader2 size={18} className="animate-spin" /> 확인 중...</> : 'AI 확인'}</button>
+                                    </div>
+                                </div>
+                            )}
+                            {currentStepData.role === 'FINISH' && (
+                                <button onClick={onComplete} className="bg-slate-800 text-white px-12 py-5 rounded-3xl font-bold text-xl shadow-neubrutalism hover:bg-slate-700 flex items-center gap-3 animate-bounce border-4 border-slate-900 mx-auto">
+                                    AI 글쓰기로 가기 <ArrowRight size={28} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function StageWriting({ apiKey, onComplete }) {
+            const [paragraph, setParagraph] = useState('');
+            const [isEvaluating, setIsEvaluating] = useState(false);
+            const [result, setResult] = useState(null);
+
+            const GRADE_CONFIG = {
+                '잘함': { color: 'bg-emerald-50 border-emerald-300', badge: 'bg-emerald-500', icon: '🌟' },
+                '보통': { color: 'bg-amber-50 border-amber-300', badge: 'bg-amber-500', icon: '👍' },
+                '노력요함': { color: 'bg-rose-50 border-rose-300', badge: 'bg-rose-500', icon: '💪' },
+            };
+
+            const evaluate = async () => {
+                if (!paragraph.trim() || paragraph.trim().length < 10) return;
+                setIsEvaluating(true);
+                setResult(null);
+                try {
+                    const prompt = `다음 규칙에 따라 학생이 작성한 문단을 평가해주세요.
+
+[기본 평가 사항]
+1. 중심 문장: 문단의 처음이나 마지막에 위치하는지, 모든 뒷받침 문장을 포괄하는지 확인. 너무 단순하거나 짧으면 수정 방법 안내.
+2. 뒷받침 문장: 중심 문장을 잘 뒷받침하는지, 문단에 어울리지 않는 문장이 있는지 확인.
+3. 맞춤법: 틀린 맞춤법이 있으면 정확한 표기와 함께 설명.
+
+[평가 기준]
+- 잘함: 문장 4~5개 이상, 중심+뒷받침 조건 잘 갖춤, 짜임새 있고 생각이 효과적으로 드러남
+- 보통: 조건 일부 갖춤, 부족한 부분 1~2가지, 구조는 지켜짐, 표현이 다소 서툴지만 내용은 적합
+- 노력요함: 중심/뒷받침 부분적, 내용 연결 매끄럽지 않음, 어울리지 않는 문장 포함, 맞춤법 3~4개 이상 틀림
+
+[평가 형식]
+기본 평가 사항에 대한 내용을 한 문단 분량으로 정리하고, 마지막에는 "그래서 친구의 평가 결과는 ~야"로 마무리.
+
+JSON으로만 응답 (마크다운 없이, 순수 JSON 문자열):
+{
+  "grade": "잘함" | "보통" | "노력요함",
+  "summary": "Detailed constructive evaluation in English focusing on grammar and context",
+  "korean_summary": "학생에게 친근하고 아주 구체적인 한국어 총평 (성취한 점과 보완할 점을 3~4문장으로 상세히 작성)",
+  "closing": "따뜻하고 격려 섞인 한 마디 (예: 그래서 친구의 평가 결과는 ~야)"
+}
+[IMPORTANT]
+1. "korean_summary" must be PURE KOREAN ONLY. 
+2. NO English words, alphabets, or special characters like '*' mixed in (e.g., use '학습 팁' 대신 'Learning Tip').
+3. Be an encouraging but professional teacher. Provide strictly valid JSON.
+
+[학생 문단]
+${paragraph}`;
+
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) {
+                        console.error("AI Writing API Error Status:", res.status);
+                        console.error("AI Writing API Error Body:", data);
+                        throw new Error(`API Connection Failed: ${res.status}`);
+                    }
+                    if (!data.candidates || !data.candidates[0]) throw new Error('API Response Error');
+                    let rawText = data.candidates[0].content.parts[0].text;
+                    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                    if (!jsonMatch) throw new Error('Invalid JSON format');
+                    const parsed = JSON.parse(jsonMatch[0]);
+                    setResult(parsed);
+                } catch (e) {
+                    setResult({ grade: '보통', summary: 'AI 평가 서버와의 연결이 잠시 지연되고 있어요. 문장을 다시 한 번 확인하거나 잠시 후 다시 시도해 주세요!', closing: '친구의 노력을 AI가 응원하고 있어!' });
+                } finally {
+                    setIsEvaluating(false);
+                }
+            };
+
+            const cfg = result ? (GRADE_CONFIG[result.grade] || GRADE_CONFIG['보통']) : null;
+
+            return (
+                <div className="flex flex-col items-center justify-center w-full animate-fade-in py-8">
+                    <div className="bg-white rounded-[3rem] p-12 shadow-neubrutalism shadow-rose-100 w-full max-w-4xl border-4 border-slate-900 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-rose-400 to-pink-400 border-b-4 border-slate-900"></div>
+
+                        <div className="mb-6 flex justify-between items-center">
+                            <span className="bg-rose-50 text-rose-600 px-5 py-2 rounded-full text-sm font-bold tracking-wide border-2 border-rose-200">STEP 5. AI 글쓰기</span>
+                            {result && <button onClick={() => { setResult(null); setParagraph(''); }} className="text-slate-400 hover:text-rose-500 font-bold text-sm flex items-center gap-1">다시 쓰기 <RefreshCw size={14} /></button>}
+                        </div>
+
+                        <div className="flex justify-center mb-3">
+                            <KnowledgeBadge types={['PRO', 'INF', 'COM']} />
+                        </div>
+                        <LearningTips
+                            title="이 단계에서 나는..."
+                            color="purple"
+                            items={[
+                                '문장이해: 내가 쓴 문단에 중심 문장과 뒷받침 문장이 잘 연결되어 있나요?',
+                                '학습 내용: 내가 쓴 내용이 주제를 잘 담고 있나요?',
+                                '도구활용: AI 도구로 내 글을 평가받으면 어떤 점을 고칠 수 있는지 알 수 있어요!',
+                            ]}
+                        />
+
+                        {!result ? (
+                            <div className="mt-6">
+                                <h2 className="text-3xl font-black text-slate-800 mb-2 text-center">나의 꿈 에세이 쓰기</h2>
+
+                                {/* Core Inquiry Question Display */}
+                                <div className="bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-4 mb-6 text-center">
+                                    <p className="text-indigo-600 font-bold text-lg">"Who do I want to be?"</p>
+                                    <p className="text-indigo-400 text-sm font-medium">(나는 어떤 사람이 되고 싶나요?)</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    <div className="bg-slate-50 p-4 rounded-2xl border-2 border-slate-100">
+                                        <p className="text-sm font-black text-slate-400 uppercase mb-2">1. WHAT?</p>
+                                        <p className="text-base font-bold text-slate-700 mb-2">내가 하고 싶은 일은?</p>
+                                        <button onClick={() => setParagraph(p => p + (p ? ' ' : '') + "I want to be a...")} className="text-xs bg-white border-2 border-slate-200 px-3 py-1.5 rounded-xl hover:border-indigo-400 text-indigo-500 font-bold transition-colors">Hint: I want to be a...</button>
+                                    </div>
+                                    <div className="bg-slate-50 p-4 rounded-2xl border-2 border-slate-100">
+                                        <p className="text-sm font-black text-slate-400 uppercase mb-2">2. WHY?</p>
+                                        <p className="text-base font-bold text-slate-700 mb-2">그렇게 생각한 이유는?</p>
+                                        <button onClick={() => setParagraph(p => p + (p ? ' ' : '') + "Because I like...")} className="text-xs bg-white border-2 border-slate-200 px-3 py-1.5 rounded-xl hover:border-indigo-400 text-indigo-500 font-bold transition-colors">Hint: Because I like...</button>
+                                    </div>
+                                    <div className="bg-slate-50 p-4 rounded-2xl border-2 border-slate-100">
+                                        <p className="text-sm font-black text-slate-400 uppercase mb-2">3. HOW?</p>
+                                        <p className="text-base font-bold text-slate-700 mb-2">나의 다짐 한마디!</p>
+                                        <button onClick={() => setParagraph(p => p + (p ? ' ' : '') + "I will study hard to...")} className="text-xs bg-white border-2 border-slate-200 px-3 py-1.5 rounded-xl hover:border-indigo-400 text-indigo-500 font-bold transition-colors">Hint: I will...</button>
+                                    </div>
+                                </div>
+                                <div className="relative">
+                                    <textarea
+                                        value={paragraph}
+                                        onChange={e => setParagraph(e.target.value)}
+                                        placeholder="이곳에 나만의 이야기를 멋진 영어 문장으로 적어보세요..."
+                                        className="w-full h-64 p-8 bg-slate-50 rounded-[2.5rem] border-4 border-slate-200 focus:border-rose-400 outline-none text-xl font-bold text-slate-700 resize-none leading-relaxed custom-scrollbar shadow-inner"
+                                    />
+                                    <div className="absolute bottom-4 right-5 text-xs font-bold text-slate-300">{paragraph.length}자</div>
+                                </div>
+                                <button
+                                    onClick={evaluate}
+                                    disabled={isEvaluating || paragraph.trim().length < 10}
+                                    className="mt-6 w-full bg-rose-500 text-white py-5 rounded-3xl font-black text-2xl shadow-neubrutalism hover:bg-rose-600 flex items-center justify-center gap-3 border-4 border-slate-900 disabled:opacity-50 transition-all hover:scale-[1.01]"
+                                >
+                                    {isEvaluating ? <><Loader2 size={28} className="animate-spin" /> AI가 평가 중...</> : <>평가 받기 <Send size={28} /></>}
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="mt-6 animate-fade-in-up">
+                                <div className={`rounded-3xl border-4 p-8 mb-6 ${cfg.color}`}>
+                                    <div className="flex items-center justify-center gap-4 mb-4">
+                                        <span className="text-5xl">{cfg.icon}</span>
+                                        <span className={`px-8 py-3 rounded-full text-white font-black text-3xl border-4 border-slate-900 shadow-neubrutalism ${cfg.badge}`}>
+                                            {result.grade}
+                                        </span>
+                                    </div>
+                                    <p className="text-slate-700 font-bold text-xl leading-relaxed text-left bg-white/70 rounded-2xl p-6 mb-4 border border-slate-100">
+                                        {result.summary}
+                                    </p>
+                                    {result.korean_summary && (
+                                        <div className="text-indigo-800 font-bold text-lg leading-relaxed text-left bg-indigo-50/50 rounded-2xl p-6 mb-4 border border-indigo-100 italic">
+                                            {result.korean_summary}
+                                        </div>
+                                    )}
+                                    <div className={`text-center font-black text-2xl p-6 rounded-2xl bg-white/80 border-4 shadow-sm ${cfg.color}`}>
+                                        "{result.closing}"
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <button onClick={() => setResult(null)} className="flex-1 bg-white border-4 border-slate-900 text-slate-700 py-4 rounded-2xl font-bold text-lg shadow-neubrutalism hover:bg-slate-50 flex items-center justify-center gap-2">
+                                        <RefreshCw size={20} /> 다시 평가
+                                    </button>
+                                    <button onClick={onComplete} className="flex-1 bg-slate-800 text-white py-4 rounded-2xl font-bold text-lg shadow-neubrutalism hover:bg-slate-700 flex items-center justify-center gap-2 border-4 border-slate-900">
+                                        Dream Card 만들기 <ArrowRight size={20} />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        function StageProject({ userData, setUserData, goal, onComplete }) {
+            const [view, setView] = useState('create');
+            const [tilt, setTilt] = useState({ x: 0, y: 0 });
+            const canvasRef = useRef(null);
+
+            const handleMouseMove = (e) => {
+                const { clientX, clientY, currentTarget } = e;
+                const { left, top, width, height } = currentTarget.getBoundingClientRect();
+                const x = (clientX - left) / width - 0.5;
+                const y = (clientY - top) / height - 0.5;
+                setTilt({ x, y });
+            };
+
+            const handleJobSelect = (jobObj) => {
+                setUserData({ ...userData, job: jobObj.job, reason: jobObj.reason });
+            };
+
+            useEffect(() => {
+                if (view === 'create' && canvasRef.current) {
+                    const ctx = canvasRef.current.getContext('2d');
+                    const theme = CARD_THEMES.find(t => t.id === userData.theme) || CARD_THEMES[0];
+
+                    const grad = ctx.createLinearGradient(0, 0, 500, 300);
+                    const colors = theme.bg.match(/#[a-fA-F0-9]{6}/g) || ['#fff', '#000'];
+                    grad.addColorStop(0, colors[0]); grad.addColorStop(1, colors[1]);
+                    ctx.fillStyle = grad; ctx.fillRect(0, 0, 500, 300);
+
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+                    ctx.fillRect(20, 20, 460, 260);
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(20, 20, 460, 260);
+
+                    ctx.fillStyle = "#1e293b";
+                    ctx.font = "bold 28px Arial";
+                    ctx.fillText("DREAM ID", 40, 70);
+
+                    ctx.font = "14px Arial"; ctx.fillStyle = theme.text; ctx.fillText("FUTURE CAREER", 40, 130);
+                    ctx.font = "bold 36px Arial"; ctx.fillStyle = "#1e293b"; ctx.fillText(userData.job || "YOUR JOB", 40, 170);
+                    ctx.font = "italic 18px Arial"; ctx.fillStyle = "#475569"; ctx.fillText(`"Because I like ${userData.reason || '...'}"`, 40, 240);
+                    ctx.font = "bold 16px Arial"; ctx.fillText(userData.name, 380, 250);
+
+                    // Add Badge
+                    ctx.fillStyle = "#F59E0B";
+                    ctx.beginPath(); ctx.arc(430, 240, 30, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = "white"; ctx.font = "bold 12px Arial"; ctx.fillText(goal.questions + "Q", 418, 245);
+                }
+            }, [userData, view, goal]);
+
+            const download = () => {
+                const link = document.createElement('a');
+                link.download = `DreamID_${userData.name}.png`;
+                link.href = canvasRef.current.toDataURL();
+                link.click();
+            };
+
+            return (
+                <div className="w-full h-full flex flex-col md:flex-row gap-8 animate-fade-in p-6 pb-32">
+                    <div className="flex-1 bg-white rounded-[2.5rem] p-10 shadow-neubrutalism border-4 border-slate-900 flex flex-col gap-8 overflow-y-auto max-h-full">
+                        <h2 className="text-3xl font-black text-slate-800 flex items-center gap-3"><Edit3 className="text-emerald-500" size={32} /> Dream Card</h2>
+
+                        <div>
+                            <label className="text-sm font-bold text-slate-400 mb-3 block">CHOOSE A JOB</label>
+                            <div className="flex flex-wrap gap-3">
+                                {JOB_DATABASE.map(j => (
+                                    <button key={j.id} onClick={() => handleJobSelect(j)} className="px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 text-slate-600 hover:border-emerald-300">
+                                        <span>{j.icon}</span> {j.job}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div><label className="text-sm font-bold text-slate-400 block mb-2">NAME</label><input className="w-full p-4 bg-slate-50 rounded-2xl font-bold border-2 border-slate-200 focus:border-emerald-400 outline-none text-lg" value={userData.name} onChange={e => setUserData({ ...userData, name: e.target.value })} /></div>
+
+                            <div className="grid grid-cols-2 gap-6">
+                                <div><label className="text-sm font-bold text-slate-400 block mb-2">JOB</label><input className="w-full p-4 bg-slate-50 rounded-2xl font-bold border-2 border-slate-200 focus:border-emerald-400 outline-none text-indigo-600 text-lg" value={userData.job} onChange={e => setUserData({ ...userData, job: e.target.value })} /></div>
+                                <div className="relative">
+                                    <label className="text-sm font-bold text-slate-400 block mb-2">REASON</label>
+                                    <button onClick={() => { const r = JOB_DATABASE[Math.floor(Math.random() * 12)]; setUserData({ ...userData, job: r.job, reason: r.reason }) }} className="absolute right-0 top-0 text-xs bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-200 font-bold border border-slate-200"><Dices size={14} /> Random</button>
+                                    <input className="w-full p-4 bg-slate-50 rounded-2xl font-bold border-2 border-slate-200 focus:border-emerald-400 outline-none text-emerald-600 text-lg" value={userData.reason} onChange={e => setUserData({ ...userData, reason: e.target.value })} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-sm font-bold text-slate-400 mb-3 block">PRETTY THEME</label>
+                            <div className="flex gap-4">
+                                {CARD_THEMES.map(t => (
+                                    <button key={t.id} onClick={() => setUserData({ ...userData, theme: t.id })} className={`w-14 h-14 rounded-full shadow-sm transition-transform hover:scale-110 ${userData.theme === t.id ? 'ring-4 ring-offset-4 ring-emerald-200' : 'border-2 border-white'}`} style={{ background: t.bg }}></button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 bg-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center relative overflow-hidden group border-4 border-slate-900"
+                        onMouseMove={handleMouseMove} onMouseLeave={() => setTilt({ x: 0, y: 0 })}>
+                        <div className="flex items-center gap-3 text-emerald-500 font-black text-sm tracking-widest mb-10">
+                            <Sparkles size={18} /> 3D CARD PREVIEW
+                        </div>
+                        <div style={{ transform: `perspective(1000px) rotateX(${tilt.y * 15}deg) rotateY(${tilt.x * -15}deg)`, transition: 'transform 0.1s' }} className="relative shadow-2xl shadow-emerald-200 rounded-2xl transform scale-110">
+                            <canvas ref={canvasRef} width={500} height={300} className="w-full max-w-[480px] rounded-2xl cursor-pointer" />
+                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        </div>
+
+                        {/* Learning Reflection Rubric */}
+                        <div className="mt-8 bg-white/70 backdrop-blur-sm p-6 rounded-2xl border-2 border-indigo-100 w-[90%]">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Award size={16} className="text-indigo-500" />
+                                <p className="text-sm font-black text-indigo-600 uppercase tracking-wide">나의 성장 체크</p>
+                            </div>
+                            <div className="flex justify-start mb-4">
+                                <KnowledgeBadge types={['AES', 'COL', 'INF', 'CRE', 'SEL', 'COM', 'REC', 'PRO', 'INT']} />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="group flex items-center gap-3 text-lg font-bold text-slate-700 cursor-pointer hover:bg-white/60 p-3 rounded-xl transition-colors relative">
+                                    <input type="checkbox" className="w-6 h-6 accent-[#00B5E2] rounded-md shrink-0" />
+                                    <span><span className="text-[#0066A1] font-black">[이해]</span> 주제 관련 핵심 어휘와 문장을 소리로 들으며 이해했다.</span>
+                                </label>
+                                <label className="group flex items-center gap-3 text-lg font-bold text-slate-700 cursor-pointer hover:bg-white/60 p-3 rounded-xl transition-colors relative">
+                                    <input type="checkbox" className="w-6 h-6 accent-[#86C786] rounded-md shrink-0" />
+                                    <span><span className="text-[#5DA15D] font-black">[자기관리]</span> 오늘 학습 목표를 스스로 설정하고 달성하기 위해 노력했다.</span>
+                                </label>
+                                <label className="group flex items-center gap-3 text-lg font-bold text-slate-700 cursor-pointer hover:bg-white/60 p-3 rounded-xl transition-colors relative">
+                                    <input type="checkbox" className="w-6 h-6 accent-[#0066A1] rounded-md shrink-0" />
+                                    <span><span className="text-[#004D7A] font-black">[지식정보처리]</span> 디지털 도구를 활용하여 정보를 지능적으로 처리했다.</span>
+                                </label>
+                                <label className="group flex items-center gap-3 text-lg font-bold text-slate-700 cursor-pointer hover:bg-white/60 p-3 rounded-xl transition-colors relative">
+                                    <input type="checkbox" className="w-6 h-6 accent-[#B8D994] rounded-md shrink-0" />
+                                    <span><span className="text-[#1E3A1E] font-black font-black">[표현]</span> 문장 구조를 생각하며 나만의 영어 드림 에세이를 작성했다.</span>
+                                </label>
+                                <label className="group flex items-center gap-3 text-lg font-bold text-slate-700 cursor-pointer hover:bg-white/60 p-3 rounded-xl transition-colors relative">
+                                    <input type="checkbox" className="w-6 h-6 accent-[#E2F2FF] rounded-md shrink-0" />
+                                    <span><span className="text-[#0066A1] font-black font-black font-black">[심미적 감성]</span> 언어와 문화를 통해 다양한 직업의 세계를 간접 체험했다.</span>
+                                </label>
+                                <label className="group flex items-center gap-3 text-lg font-bold text-slate-700 cursor-pointer hover:bg-white/60 p-3 rounded-xl transition-colors relative">
+                                    <input type="checkbox" className="w-6 h-6 accent-[#D6EFFF] rounded-md shrink-0" />
+                                    <span><span className="text-[#0066A1] font-black">[상호작용]</span> AI 친구와 대화하며 실시간 영어 소통 능력을 발휘했다.</span>
+                                </label>
+                                <label className="group flex items-center gap-3 text-lg font-bold text-slate-700 cursor-pointer hover:bg-white/60 p-3 rounded-xl transition-colors relative">
+                                    <input type="checkbox" className="w-6 h-6 accent-[#00B5E2] rounded-md shrink-0" />
+                                    <span><span className="text-indigo-600 font-black">[공동체]</span> 내가 되고 싶은 모습이 사회에 어떤 도움을 줄지 상상해 보았다.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button onClick={download} className="mt-6 bg-slate-800 text-white px-10 py-4 rounded-2xl font-bold hover:bg-slate-700 shadow-neubrutalism flex items-center gap-3 transition-all hover:-translate-y-1 text-lg border-4 border-slate-900">
+                            <Save size={20} /> Save to Device
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<VibeLearningBig />);
+    </script>
+</body>
+
+</html>
